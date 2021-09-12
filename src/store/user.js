@@ -13,8 +13,9 @@ const slice = createSlice({
         userRequested: (user) => {
             user.loading = true;
         },
-        gotUserToken: (user) => {
+        gotUserToken: (user, action) => {
             user.loading = true;
+            user.token = action?.payload?.access_token;
         },
         userRequestFailed: (user, action) => {
             user.loading = false;

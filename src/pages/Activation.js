@@ -20,13 +20,14 @@ export default function Activation() {
         dispatch(activateAccount({ activation_token: token }));
     }
 
+    console.log("auth")
     return (
         <Form noValidate onSubmit={handleSubmit}>
             <div className="container" style={{ width: "50%" }}>
                 <div className="m-5 p-5">
                     <div className="my-5">
                         <h3>{`Welcome ${name}!`}</h3>
-                        <h6>Your account was successfully activated</h6>
+                        <h6>You are a step away from seting up your account.</h6>
                     </div>
                     <div className="d-flex flex-grow-2">
                         <Button

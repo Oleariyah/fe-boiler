@@ -3,7 +3,6 @@ import { Form, Button, Spinner, OverlayTrigger } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import { popover } from "../helpers/password_guides";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
 import jwt from "jsonwebtoken";
 import validate from "../utils/validate.json";
 import { useLocation, Link } from "react-router-dom";
@@ -102,7 +101,7 @@ export default function ResetPassword() {
                         </OverlayTrigger>
                         <Form.Control.Feedback type="invalid">
                             Please provide a valid password.
-                                </Form.Control.Feedback>
+                        </Form.Control.Feedback>
                     </Form.Group>
                     }
                     {<Form.Group controlId="validationCustom02">
@@ -118,7 +117,7 @@ export default function ResetPassword() {
                         />
                         <Form.Control.Feedback type="invalid">
                             Please provide a valid password.
-                                </Form.Control.Feedback>
+                        </Form.Control.Feedback>
                     </Form.Group>
                     }
                     <div className="d-flex flex-grow-2">

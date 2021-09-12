@@ -6,8 +6,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { loadProgressBar } from 'axios-progress-bar';
 import { Provider } from 'react-redux';
-import configureStore from './store/configureStore';
 import * as Sentry from "@sentry/react";
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './store/configureStore';
 import { Integrations } from "@sentry/tracing";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "axios-progress-bar/dist/nprogress.css";
@@ -24,13 +25,14 @@ Sentry.init({
 });
 
 loadProgressBar();
-const store = configureStore()
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
       <Provider store={store}>
-        <App />
+        <PersistGate loading={null} persistor={persistor}>
+          <App />
+        </PersistGate>
       </Provider>,
     </BrowserRouter>
   </React.StrictMode>,

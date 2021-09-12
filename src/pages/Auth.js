@@ -10,11 +10,13 @@ import validate from "../utils/validate.json";
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { loginUser, registerUser, resetPassword, getAuthDetails, loginWithGoogle, loginWithFacebook } from "../store/auth";
+import { getUserToken, getUser } from "../store/user";
 import '../styles/Auth.css';
 
-export default function Auth() {
+export default function Auth(props) {
     const dispatch = useDispatch();
     const auth = useSelector(getAuthDetails);
+    const user = useSelector(getUser);
     const history = useHistory();
 
     const { loading } = auth;
@@ -30,13 +32,14 @@ export default function Auth() {
     };
 
     useEffect(() => {
-        if (auth && auth.newUser) {
+        if (user && user.token) {
+            history.push("/user")
         }
 
         if (auth && auth.isLogged) {
-            localStorage.setItem("firstLogin", true)
+            dispatch(getUserToken(null))
         }
-    }, [auth, history])
+    }, [auth, dispatch, history, props, user])
 
     const handleSubmit = (e) => {
         e.preventDefault();
