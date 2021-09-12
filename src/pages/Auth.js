@@ -32,14 +32,21 @@ export default function Auth(props) {
     };
 
     useEffect(() => {
-        if (user && user.token) {
-            history.push("/user")
-        }
-
         if (auth && auth.isLogged) {
             dispatch(getUserToken(null))
         }
-    }, [auth, dispatch, history, props, user])
+    }, [auth, dispatch])
+
+    // useEffect(() => {
+    //     console.log("user", user)
+    //     if (user && user.token !== "") {
+    //         window.location = "/user";
+    //     }
+
+    //     if (user && user.token === "") {
+    //         window.location = "/";
+    //     }
+    // }, [user])
 
     const handleSubmit = (e) => {
         e.preventDefault();

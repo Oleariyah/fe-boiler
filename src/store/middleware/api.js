@@ -1,13 +1,8 @@
 import axios from "axios";
 import * as actions from "../api";
-import { Redirect } from "react-router-dom";
-import { getUserToken } from "../user";
-import { useDispatch } from "react-redux";
+import { saveState, loadState } from "../../helpers/auth";
 
 axios.interceptors.request.use((config) => {
-    config.withCredentials = true;
-    config.retry = false;
-    console.log(config)
     return config;
 }, (error) => {
     return Promise.reject(error);
@@ -15,24 +10,31 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use((response) => {
     return response;
-}, (error) => {
-    const originalRequest = error?.config;
-    if (error?.response?.status === 401 && originalRequest?.url?.includes("/user/refresh_token")) {
-        <Redirect to="/login" />
-        return Promise.reject(error);
-    } else if (error?.response?.status === 401 && !originalRequest?.retry) {
-        originalRequest.retry = true;
-        const dispatch = useDispatch();
-        dispatch(getUserToken(null))
+}, async (error) => {
+    const originalRequest = error.config;
+    if (error.response.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/refresh_token`, null, { withCredentials: true })
+        originalRequest.headers.Authorization = response?.data?.access_token
+        saveState(response?.data?.access_token)
+        return axios(originalRequest);
     }
     return Promise.reject(error);
 });
 
 const api = ({ dispatch, getState }) => next => async action => {
-    const token = getState().entities?.user?.token;
+    const state = loadState() && loadState().user && loadState();
     if (action.type !== actions.apiCallBegan.type) return next(action);
 
-    const { url, method, data, onSuccess, onStart, onError } = action.payload;
+    const {
+        url,
+        method,
+        data,
+        onSuccess,
+        onStart,
+        onError,
+        withCredentials
+    } = action.payload;
 
     if (onStart) dispatch({ type: onStart })
     next(action);
@@ -43,7 +45,8 @@ const api = ({ dispatch, getState }) => next => async action => {
             url,
             method,
             data,
-            headers: { Authorization: `${token && `Bearer ${token}`}` },
+            withCredentials: withCredentials && withCredentials,
+            headers: { Authorization: `${state && `Bearer ${state.token}`}` },
         })
         //General
         dispatch(actions.apiCallSuccess(response.data));
@@ -54,7 +57,7 @@ const api = ({ dispatch, getState }) => next => async action => {
         //General
         dispatch(actions.apiCallFailed(error?.response?.data?.message));
         //Specific
-        if (onError) dispatch({ type: onError })
+        if (onError) dispatch({ type: onError, payload: error?.response?.data?.message })
     }
 
 }
