@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button, Spinner, OverlayTrigger } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import { popover } from "../helpers/password_guides";
@@ -11,13 +10,13 @@ import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { loginUser, registerUser, resetPassword, getAuthDetails, loginWithGoogle, loginWithFacebook } from "../store/auth";
 import { getUserToken, getUser } from "../store/user";
+import { saveState } from "../helpers/auth";
 import '../styles/Auth.css';
 
 export default function Auth(props) {
     const dispatch = useDispatch();
     const auth = useSelector(getAuthDetails);
     const user = useSelector(getUser);
-    const history = useHistory();
 
     const { loading } = auth;
 
@@ -37,16 +36,12 @@ export default function Auth(props) {
         }
     }, [auth, dispatch])
 
-    // useEffect(() => {
-    //     console.log("user", user)
-    //     if (user && user.token !== "") {
-    //         window.location = "/user";
-    //     }
-
-    //     if (user && user.token === "") {
-    //         window.location = "/";
-    //     }
-    // }, [user])
+    useEffect(() => {
+        if (user && user.token !== "") {
+            saveState(user.token);
+            window.location = "/user";
+        }
+    }, [user])
 
     const handleSubmit = (e) => {
         e.preventDefault();
