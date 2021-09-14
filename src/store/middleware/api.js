@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as actions from "../api";
+import { useHistory } from "react-router-dom";
 import { saveState, loadState } from "../../helpers/auth";
 
 axios.interceptors.request.use((config) => {
@@ -12,6 +13,12 @@ axios.interceptors.response.use((response) => {
     return response;
 }, async (error) => {
     const originalRequest = error.config;
+    if (error.response.status === 401 && originalRequest.url.includes("/user/refresh_token")) {
+        const history = useHistory();
+        //store.commit("clearUserData");
+        history.push("/");
+        return Promise.reject(error);
+    }
     if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/refresh_token`, null, { withCredentials: true })
