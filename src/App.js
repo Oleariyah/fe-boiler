@@ -10,7 +10,7 @@ function App() {
   const ref = useRef(null);
 
   return (
-    <div className="container">
+    <div>
       <ToastContainer />
       <LoadingBar color='#0366d6' ref={ref} />
       <Switch>

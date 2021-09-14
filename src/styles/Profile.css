@@ -1,0 +1,43 @@
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.greetings {
+	font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 2.25rem;
+    hyphens: auto;
+    word-break: break-word;
+    word-wrap: break-word;
+    color: #202124;
+    text-align: center;
+}
+
+.card {
+    flex-grow: 1;
+    flex-shrink: 1;
+    box-sizing: border-box;
+    overflow: hidden;
+	transition: 250ms border ease-in-out;
+}
+
+.card-text {
+	letter-spacing: .01428571em;
+    font-family: Roboto,Arial,sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    hyphens: auto;
+    word-break: break-word;
+    word-wrap: break-word;
+    color: #5f6368;
+	font-style: italic;
+}
+
+.card:hover {
+	border: 1px solid rgb(59, 57, 57);
+	cursor: pointer;
+}

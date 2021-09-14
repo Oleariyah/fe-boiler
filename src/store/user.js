@@ -6,7 +6,6 @@ const slice = createSlice({
     name: "user",
     initialState: {
         loading: false,
-        token: "",
         details: null,
         lastFetch: null
     },
@@ -14,41 +13,23 @@ const slice = createSlice({
         userRequested: (user) => {
             user.loading = true;
         },
-        gotUserToken: (user, action) => {
-            user.loading = false;
-            user.token = action?.payload?.access_token;
-        },
         gotUserInfo: (user, action) => {
-            user.loading = true;
+            user.loading = false;
             user.details = action?.payload;
         },
-        userRequestFailed: (user, action) => {
+        userRequestFailed: (user) => {
             user.loading = false;
-            user.token = ""
         }
     }
 })
 
 const {
-    gotUserToken,
     userRequested,
     userRequestFailed,
     gotUserInfo,
 } = slice.actions;
 
 //Action Creators
-export const getUserToken = (value) => (dispatch, getState) => {
-    dispatch(apiCallBegan({
-        url: "/user/refresh_token",
-        method: "post",
-        data: value,
-        onStart: userRequested.type,
-        onSuccess: gotUserToken.type,
-        onError: userRequestFailed.type,
-        withCredentials: true
-    }))
-}
-
 export const getUserInfo = () => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/infor",

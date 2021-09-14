@@ -1,56 +1,64 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
 import { apiCallBegan } from "./api";
+import { saveState, logout } from "../helpers/auth";
 
 const slice = createSlice({
     name: "auth",
     initialState: {
         loading: false,
         isLogged: false,
-        newUser: false,
-        isAdmin: false,
+        token: "",
         lastFetch: null
     },
     reducers: {
+        authReset: (auth) => {
+            auth.loading = false;
+            auth.isLogged = false;
+            auth.token = "";
+            auth.lastFetch = null;
+        },
         authRequested: (auth) => {
             auth.loading = true;
         },
-        userRegistered: (auth, action) => {
-            auth.newUser = true;
+        userRegistered: (auth) => {
             auth.loading = false;
         },
-        userLoggedIn: (auth, action) => {
-            auth.newUser = false;
-            auth.isAdmin = false;
+        userLoggedIn: (auth) => {
             auth.isLogged = true;
             auth.loading = false;
             auth.lastFetch = Date.now();
         },
-        userLoggedInViaGoogle: (auth, action) => {
-            auth.newUser = false;
-            auth.isAdmin = false;
+        userLoggedInViaGoogle: (auth) => {
             auth.isLogged = true;
             auth.loading = false;
             auth.lastFetch = Date.now();
         },
-        userLoggedInViaFacebook: (auth, action) => {
-            auth.newUser = false;
-            auth.isAdmin = false;
+        userLoggedInViaFacebook: (auth) => {
             auth.isLogged = true;
             auth.loading = false;
             auth.lastFetch = Date.now();
         },
-        sentResetPasswordLink: (auth, action) => {
+        sentResetPasswordLink: (auth) => {
             auth.loading = false;
         },
-        authRequestFailed: (auth, action) => {
+        gotUserToken: (user, action) => {
+            user.loading = false;
+            user.token = action?.payload?.access_token;
+            user.lastFetch = Date.now();
+            saveState(action?.payload?.access_token);
+        },
+        accountActivated: (auth) => {
             auth.loading = false;
         },
-        accountActivated: (auth, action) => {
-            auth.loading = false;
+        userLoggedOut: (user) => {
+            user.loading = false;
+            user.isLogged = false
+            user.token = "";
+            logout();
         },
-        userLoggedOut: (auth, action) => {
-            auth.isLogged = false;
+        authRequestFailed: (auth) => {
+            auth.loading = false;
         }
     }
 })
@@ -64,7 +72,9 @@ const {
     userRegistered,
     sentResetPasswordLink,
     accountActivated,
-    userLoggedOut
+    userLoggedOut,
+    gotUserToken,
+    authReset
 } = slice.actions;
 
 //Action Creators
@@ -134,9 +144,29 @@ export const activateAccount = (value) => (dispatch) => {
     }))
 }
 
-export const logoutUser = () => apiCallBegan({
-    onSuccess: userLoggedOut.type,
-})
+export const getUserToken = (value) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/user/refresh_token",
+        method: "post",
+        data: value,
+        onStart: authRequested.type,
+        onSuccess: gotUserToken.type,
+        onError: authRequestFailed.type,
+        withCredentials: true
+    }))
+}
+
+export const logoutUser = () => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/user/logout",
+        method: "get",
+        onStart: authRequested.type,
+        onSuccess: userLoggedOut.type,
+        onError: authRequestFailed.type
+    }))
+}
+
+export const resetAuth = () => (dispatch) => dispatch({ type: authReset.type })
 
 //Selectors
 //Memoization
