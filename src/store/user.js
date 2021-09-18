@@ -19,7 +19,12 @@ const slice = createSlice({
         },
         userRequestFailed: (user) => {
             user.loading = false;
-        }
+        },
+        userReset: (user) => {
+            user.loading = false;
+            user.details = null;
+            user.lastFetch = null;
+        },
     }
 })
 
@@ -27,6 +32,7 @@ const {
     userRequested,
     userRequestFailed,
     gotUserInfo,
+    userReset
 } = slice.actions;
 
 //Action Creators
@@ -39,6 +45,8 @@ export const getUserInfo = () => (dispatch, getState) => {
         onError: userRequestFailed.type
     }))
 }
+
+export const resetUser = () => (dispatch) => dispatch({ type: userReset.type })
 
 //Selectors
 //Memoization

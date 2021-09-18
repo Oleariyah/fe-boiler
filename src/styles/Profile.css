@@ -21,7 +21,7 @@
     flex-shrink: 1;
     box-sizing: border-box;
     overflow: hidden;
-	transition: 250ms border ease-in-out;
+	transition: 250ms border ease-in-out, 250ms transform ease-in-out;
 }
 
 .card-text {
@@ -39,5 +39,6 @@
 
 .card:hover {
 	border: 1px solid rgb(59, 57, 57);
+    transform: scale(0.9);
 	cursor: pointer;
 }

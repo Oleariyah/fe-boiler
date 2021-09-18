@@ -162,7 +162,8 @@ export const logoutUser = () => (dispatch, getState) => {
         method: "get",
         onStart: authRequested.type,
         onSuccess: userLoggedOut.type,
-        onError: authRequestFailed.type
+        onError: authRequestFailed.type,
+        onReset: true
     }))
 }
 

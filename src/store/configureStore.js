@@ -2,6 +2,7 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 import reducer from "./reducer";
 import logger from "./middleware/logger";
 import toastNotification from "./middleware/toast";
+import reset from "./middleware/reset";
 import storage from 'redux-persist/lib/storage'
 import api from "./middleware/api";
 import {
@@ -35,6 +36,7 @@ const store = configureStore({
         logger("console"),
         toastNotification,
         api,
+        reset
     ]
 });
 

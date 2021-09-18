@@ -40,7 +40,8 @@ const api = ({ dispatch, getState }) => next => async action => {
         onSuccess,
         onStart,
         onError,
-        withCredentials
+        withCredentials,
+        onReset
     } = action.payload;
 
     if (onStart) dispatch({ type: onStart })
@@ -59,6 +60,7 @@ const api = ({ dispatch, getState }) => next => async action => {
         dispatch(actions.apiCallSuccess(response.data));
         //Specific
         if (onSuccess) dispatch({ type: onSuccess, payload: response?.data });
+        if (onReset) dispatch(actions.apiResetStore());
 
     } catch (error) {
         //General
