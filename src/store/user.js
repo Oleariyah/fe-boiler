@@ -7,6 +7,7 @@ const slice = createSlice({
     initialState: {
         loading: false,
         details: null,
+        updated: null,
         lastFetch: null
     },
     reducers: {
@@ -16,6 +17,17 @@ const slice = createSlice({
         gotUserInfo: (user, action) => {
             user.loading = false;
             user.details = action?.payload;
+        },
+        userInfoUpdated: (user, action) => {
+            user.loading = false;
+            user.details = action?.payload?.user;
+        },
+        userPasswordChanged: (user, action) => {
+            user.loading = false;
+        },
+        userAvatarChanged: (user, action) => {
+            user.loading = false;
+            user.details = { ...user.details, avatar: action.payload.url }
         },
         userRequestFailed: (user) => {
             user.loading = false;
@@ -32,6 +44,9 @@ const {
     userRequested,
     userRequestFailed,
     gotUserInfo,
+    userInfoUpdated,
+    userPasswordChanged,
+    userAvatarChanged,
     userReset
 } = slice.actions;
 
@@ -42,6 +57,40 @@ export const getUserInfo = () => (dispatch, getState) => {
         method: "get",
         onStart: userRequested.type,
         onSuccess: gotUserInfo.type,
+        onError: userRequestFailed.type
+    }))
+}
+
+export const updateUserInfo = (value) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/user/update",
+        method: "patch",
+        data: value,
+        onStart: userRequested.type,
+        onSuccess: userInfoUpdated.type,
+        onError: userRequestFailed.type
+    }))
+}
+
+export const updateUserAvatar = ({ data, type }) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/api/upload_avatar",
+        method: "post",
+        data,
+        type,
+        onStart: userRequested.type,
+        onSuccess: userAvatarChanged.type,
+        onError: userRequestFailed.type,
+    }))
+}
+
+export const changeUserPassword = (value) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/user/reset",
+        method: "post",
+        data: value,
+        onStart: userRequested.type,
+        onSuccess: userPasswordChanged.type,
         onError: userRequestFailed.type
     }))
 }

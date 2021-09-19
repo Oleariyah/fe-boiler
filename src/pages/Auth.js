@@ -9,7 +9,6 @@ import { popover } from "../helpers/password_guides";
 import validate from "../utils/validate.json";
 import { GoogleLogin } from 'react-google-login';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
-import { getUserInfo } from "../store/user";
 import {
     getUserToken,
     loginUser,
@@ -51,7 +50,6 @@ export default function Auth(props) {
 
     useEffect(() => {
         if (auth?.token !== "") {
-            dispatch(getUserInfo())
             history.push("/user")
         }
     }, [auth?.token, dispatch, history])
@@ -90,11 +88,13 @@ export default function Auth(props) {
     }
 
     const responseGoogle = (response) => {
-        dispatch(loginWithGoogle(response.tokenId))
+        if (response?.tokenId)
+            dispatch(loginWithGoogle(response.tokenId))
     }
 
     const responseFacebook = response => {
-        dispatch(loginWithFacebook(response.userID, response.accessToken))
+        if (response?.userID)
+            dispatch(loginWithFacebook(response.userID, response.accessToken))
     };
 
     return (

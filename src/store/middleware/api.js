@@ -1,7 +1,6 @@
 import axios from "axios";
 import * as actions from "../api";
-import { useHistory } from "react-router-dom";
-import { saveState, loadState } from "../../helpers/auth";
+import { saveState, logout } from "../../helpers/auth";
 
 axios.interceptors.request.use((config) => {
     return config;
@@ -13,13 +12,11 @@ axios.interceptors.response.use((response) => {
     return response;
 }, async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && originalRequest.url.includes("/user/refresh_token")) {
-        const history = useHistory();
-        //store.commit("clearUserData");
-        history.push("/");
+    if (error.response.status === 400 && originalRequest.url.includes("/user/refresh_token")) {
+        logout()
         return Promise.reject(error);
     }
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 400 && !originalRequest._retry) {
         originalRequest._retry = true;
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/refresh_token`, null, { withCredentials: true })
         originalRequest.headers.Authorization = response?.data?.access_token
@@ -30,7 +27,6 @@ axios.interceptors.response.use((response) => {
 });
 
 const api = ({ dispatch, getState }) => next => async action => {
-    const state = loadState() && loadState().user && loadState();
     if (action.type !== actions.apiCallBegan.type) return next(action);
 
     const {
@@ -40,21 +36,25 @@ const api = ({ dispatch, getState }) => next => async action => {
         onSuccess,
         onStart,
         onError,
-        withCredentials,
-        onReset
+        onReset,
+        type
     } = action.payload;
 
     if (onStart) dispatch({ type: onStart })
     next(action);
 
     try {
+        const state = getState();
         const response = await axios.request({
             baseURL: process.env.REACT_APP_API_URL,
             url,
             method,
             data,
-            withCredentials: withCredentials && withCredentials,
-            headers: { Authorization: `${state && `Bearer ${state.token}`}` },
+            withCredentials: true,
+            headers: {
+                Authorization: `${state && `Bearer ${state?.entities?.auth?.token}`}`,
+                "Content-Type": type && type,
+            }
         })
         //General
         dispatch(actions.apiCallSuccess(response.data));
@@ -63,6 +63,10 @@ const api = ({ dispatch, getState }) => next => async action => {
         if (onReset) dispatch(actions.apiResetStore());
 
     } catch (error) {
+        const originalRequest = error.config;
+        if (error?.response?.status === 400 && originalRequest?.url?.includes("/user/refresh_token")) {
+            dispatch(actions.apiResetStore());
+        }
         //General
         dispatch(actions.apiCallFailed(error?.response?.data?.message));
         //Specific
