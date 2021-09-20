@@ -3,13 +3,11 @@ import { Form, Button, Spinner, OverlayTrigger } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import { popover } from "../helpers/password_guides";
 import axios from "axios";
-import jwt from "jsonwebtoken";
 import validate from "../utils/validate.json";
 import { useLocation, Link } from "react-router-dom";
 
 export default function ResetPassword() {
     const [isLoading, setLoading] = useState(false);
-    const [data, setData] = useState("");
     const [token, setToken] = useState("")
     const [password, setPassword] = useState();
     const [value, setValue] = useState();
@@ -21,11 +19,9 @@ export default function ResetPassword() {
         if (location && location.search) {
             const getQuery = location.search;
             const token = getQuery.substring(3);
-            const data = jwt.decode(token);
-            setData(data);
             setToken(token)
         }
-    }, [])
+    }, [location])
 
     const handleSubmit = (e) => {
         e.preventDefault();

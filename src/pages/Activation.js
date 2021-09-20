@@ -2,11 +2,13 @@ import React from 'react';
 import { Form, Button, Spinner } from "react-bootstrap";
 import { activateAccount, getAuthDetails } from "../store/auth";
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import jwt from "jsonwebtoken";
 import { useParams, Link } from "react-router-dom";
 
 export default function Activation() {
     const dispatch = useDispatch();
+    const history = useHistory();
     const auth = useSelector(getAuthDetails);
 
     const { token } = useParams();
@@ -17,7 +19,7 @@ export default function Activation() {
     const handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        dispatch(activateAccount({ activation_token: token }));
+        dispatch(activateAccount({ activation_token: token, history }));
     }
 
     console.log("auth")

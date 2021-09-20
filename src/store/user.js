@@ -51,44 +51,47 @@ const {
 } = slice.actions;
 
 //Action Creators
-export const getUserInfo = () => (dispatch, getState) => {
+export const getUserInfo = (history) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/infor",
         method: "get",
+        history,
         onStart: userRequested.type,
         onSuccess: gotUserInfo.type,
         onError: userRequestFailed.type
     }))
 }
 
-export const updateUserInfo = (value) => (dispatch, getState) => {
+export const updateUserInfo = ({ data, history }) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/update",
         method: "patch",
-        data: value,
+        data,
         onStart: userRequested.type,
         onSuccess: userInfoUpdated.type,
         onError: userRequestFailed.type
     }))
 }
 
-export const updateUserAvatar = ({ data, type }) => (dispatch, getState) => {
+export const updateUserAvatar = ({ data, type, history }) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/api/upload_avatar",
         method: "post",
         data,
         type,
+        history,
         onStart: userRequested.type,
         onSuccess: userAvatarChanged.type,
         onError: userRequestFailed.type,
     }))
 }
 
-export const changeUserPassword = (value) => (dispatch, getState) => {
+export const changeUserPassword = ({ data, history }) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/reset",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: userRequested.type,
         onSuccess: userPasswordChanged.type,
         onError: userRequestFailed.type

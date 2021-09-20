@@ -5,16 +5,7 @@ import toastNotification from "./middleware/toast";
 import reset from "./middleware/reset";
 import storage from 'redux-persist/lib/storage'
 import api from "./middleware/api";
-import {
-    persistStore,
-    persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
-} from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
 
 const persistConfig = {
     key: 'root',
@@ -29,9 +20,7 @@ const store = configureStore({
     reducer: persistedReducer,
     middleware: [
         ...getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            }
+            serializableCheck: false
         }),
         logger("console"),
         toastNotification,

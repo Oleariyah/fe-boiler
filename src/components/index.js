@@ -1,4 +1,5 @@
 import Header from "./Header";
+import Subscribers from "./Subscribers";
 
 
-export { Header }
+export { Header, Subscribers }

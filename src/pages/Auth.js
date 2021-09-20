@@ -44,9 +44,9 @@ export default function Auth(props) {
 
     useEffect(() => {
         if (auth?.isLogged) {
-            dispatch(getUserToken(null))
+            dispatch(getUserToken({ data: null, history }))
         }
-    }, [auth?.isLogged, dispatch])
+    }, [auth?.isLogged, dispatch, history])
 
     useEffect(() => {
         if (auth?.token !== "") {
@@ -65,7 +65,7 @@ export default function Auth(props) {
             if (!toLogin && !forgotPassowrd) {
                 if (isConfirmed) {
                     setValidated(false);
-                    dispatch(registerUser(value));
+                    dispatch(registerUser({ data: value, history }));
                 } else {
                     toast.error("Oops! The provided passwords do not match the confirmed password.")
                 }
@@ -73,7 +73,7 @@ export default function Auth(props) {
 
             if (toLogin && !forgotPassowrd) {
                 setValidated(false);
-                dispatch(loginUser(value));
+                dispatch(loginUser({ data: value, history }));
             }
 
             if (forgotPassowrd) {
@@ -89,12 +89,13 @@ export default function Auth(props) {
 
     const responseGoogle = (response) => {
         if (response?.tokenId)
-            dispatch(loginWithGoogle(response.tokenId))
+            dispatch(loginWithGoogle({ data: response.tokenId, history }))
     }
 
     const responseFacebook = response => {
+        const { userID, accessToken } = response;
         if (response?.userID)
-            dispatch(loginWithFacebook(response.userID, response.accessToken))
+            dispatch(loginWithFacebook({ data: { userID, accessToken }, history }))
     };
 
     return (

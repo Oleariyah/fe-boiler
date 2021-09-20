@@ -78,88 +78,95 @@ const {
 } = slice.actions;
 
 //Action Creators
-export const loginUser = (value) => (dispatch, getState) => {
+export const loginUser = ({ data, history }) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/login",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: userLoggedIn.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const registerUser = (value) => (dispatch) => {
+export const registerUser = ({ data, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/register",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: userRegistered.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const resetPassword = (value) => (dispatch) => {
+export const resetPassword = ({ data, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/forgot",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: sentResetPasswordLink.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const loginWithGoogle = (value) => (dispatch) => {
+export const loginWithGoogle = ({ data, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/google_login",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: userLoggedInViaGoogle.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const loginWithFacebook = (value) => (dispatch) => {
+export const loginWithFacebook = ({ data, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/facebook_login",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: userLoggedInViaFacebook.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const activateAccount = (value) => (dispatch) => {
+export const activateAccount = ({ data, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/activation",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: accountActivated.type,
         onError: authRequestFailed.type
     }))
 }
 
-export const getUserToken = (value) => (dispatch, getState) => {
+export const getUserToken = ({ data, history }) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/refresh_token",
         method: "post",
-        data: value,
+        data,
+        history,
         onStart: authRequested.type,
         onSuccess: gotUserToken.type,
-        onError: authRequestFailed.type,
-        withCredentials: true
+        onError: authRequestFailed.type
     }))
 }
 
-export const logoutUser = () => (dispatch, getState) => {
+export const logoutUser = (history) => (dispatch, getState) => {
     dispatch(apiCallBegan({
         url: "/user/logout",
         method: "get",
+        history,
         onStart: authRequested.type,
         onSuccess: userLoggedOut.type,
         onError: authRequestFailed.type,

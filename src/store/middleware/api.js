@@ -37,7 +37,8 @@ const api = ({ dispatch, getState }) => next => async action => {
         onStart,
         onError,
         onReset,
-        type
+        type,
+        history
     } = action.payload;
 
     if (onStart) dispatch({ type: onStart })
@@ -66,7 +67,7 @@ const api = ({ dispatch, getState }) => next => async action => {
         const originalRequest = error.config;
         if (error?.response?.status === 400 && originalRequest?.url?.includes("/user/refresh_token")) {
             dispatch(actions.apiResetStore());
-            window.location = "/"
+            history.push("/")
         }
         //General
         dispatch(actions.apiCallFailed(error?.response?.data?.message));
