@@ -138,11 +138,11 @@ export const loginWithFacebook = ({ data, history }) => (dispatch) => {
     }))
 }
 
-export const activateAccount = ({ data, history }) => (dispatch) => {
+export const activateAccount = ({ token, history }) => (dispatch) => {
     dispatch(apiCallBegan({
         url: "/user/activation",
         method: "post",
-        data,
+        data: { activation_token: token },
         history,
         onStart: authRequested.type,
         onSuccess: accountActivated.type,

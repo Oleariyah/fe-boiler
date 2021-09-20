@@ -19,13 +19,12 @@ export default function Activation() {
     const handleSubmit = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        dispatch(activateAccount({ activation_token: token, history }));
+        dispatch(activateAccount({ token, history }));
     }
 
-    console.log("auth")
     return (
         <Form noValidate onSubmit={handleSubmit}>
-            <div className="container" style={{ width: "50%" }}>
+            <div className="container" style={{ width: "30%" }}>
                 <div className="m-5 p-5">
                     <div className="my-5">
                         <h3>{`Welcome ${name}!`}</h3>

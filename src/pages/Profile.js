@@ -226,9 +226,11 @@ export default function Profile() {
 						</div>
 					</div>
 				</div>
-				<div>
+				{details?.role === "admin" && <div>
 					<Subscribers />
 				</div>
+				}
+
 			</div>
 
 		</div>

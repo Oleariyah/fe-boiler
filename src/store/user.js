@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createSelector } from "reselect";
+import update from 'immutability-helper';
 import { apiCallBegan } from "./api";
 
 const slice = createSlice({
@@ -8,6 +9,7 @@ const slice = createSlice({
         loading: false,
         details: null,
         updated: null,
+        subscribers: [],
         lastFetch: null
     },
     reducers: {
@@ -18,9 +20,23 @@ const slice = createSlice({
             user.loading = false;
             user.details = action?.payload;
         },
+        gotAllSubscribersInfo: (user, action) => {
+            user.loading = false;
+            user.subscribers = action?.payload;
+        },
         userInfoUpdated: (user, action) => {
             user.loading = false;
             user.details = action?.payload?.user;
+        },
+        userRoleUpdated: (user, action) => {
+            user.loading = false;
+
+            const index = user?.subscribers?.findIndex(item => item._id === action?.payload?.subscribers?._id);
+            user.subscribers = update(user.subscribers, { [index]: { $set: action.payload.subscribers } })
+        },
+        userDeleted: (user, action) => {
+            user.loading = false;
+            user.subscribers = update(user.subscribers, { $splice: [[action.payload.id, 1]] })
         },
         userPasswordChanged: (user, action) => {
             user.loading = false;
@@ -47,6 +63,9 @@ const {
     userInfoUpdated,
     userPasswordChanged,
     userAvatarChanged,
+    gotAllSubscribersInfo,
+    userRoleUpdated,
+    userDeleted,
     userReset
 } = slice.actions;
 
@@ -58,6 +77,17 @@ export const getUserInfo = (history) => (dispatch, getState) => {
         history,
         onStart: userRequested.type,
         onSuccess: gotUserInfo.type,
+        onError: userRequestFailed.type
+    }))
+}
+
+export const getAllSubcribersInfo = (history) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: "/user/subscribers",
+        method: "get",
+        history,
+        onStart: userRequested.type,
+        onSuccess: gotAllSubscribersInfo.type,
         onError: userRequestFailed.type
     }))
 }
@@ -94,6 +124,29 @@ export const changeUserPassword = ({ data, history }) => (dispatch, getState) =>
         history,
         onStart: userRequested.type,
         onSuccess: userPasswordChanged.type,
+        onError: userRequestFailed.type
+    }))
+}
+
+export const updateUserRole = ({ value, id, history }) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: `/user/update_role/${id}`,
+        method: "patch",
+        data: { role: value },
+        history,
+        onStart: userRequested.type,
+        onSuccess: userRoleUpdated.type,
+        onError: userRequestFailed.type
+    }))
+}
+
+export const deleteUser = ({ id, history }) => (dispatch, getState) => {
+    dispatch(apiCallBegan({
+        url: `/user/delete/${id}`,
+        method: "delete",
+        history,
+        onStart: userRequested.type,
+        onSuccess: userDeleted.type,
         onError: userRequestFailed.type
     }))
 }
