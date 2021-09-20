@@ -12,9 +12,7 @@ axios.interceptors.response.use((response) => {
     return response;
 }, async (error) => {
     const originalRequest = error.config;
-    if (error.response.status === 400 && originalRequest.url.includes("/user/login"))
-        return Promise.reject(error);
-    if (error.response.status === 400 && originalRequest.url.includes("/user/refresh_token")) {
+    if (error.response.status === 400 && ["/user/login", "/user/refresh_token"].indexOf(originalRequest.url) > -1) {
         logout()
         return Promise.reject(error);
     }
