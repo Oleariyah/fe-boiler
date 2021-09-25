@@ -1,10 +1,9 @@
-import React, { useRef } from 'react'
-import { Auth, Activation, ResetPassword, Profile } from "./pages";
+import React, { useRef, Suspense } from 'react';
 import { ToastContainer } from "react-toastify";
-import { Route, Switch } from "react-router-dom";
 import LoadingBar from "react-top-loading-bar";
-import ProtectedRoute from "./modules/ProtectedRoute";
+import Routers from './Routes';
 import './styles/App.css';
+
 
 function App() {
   const ref = useRef(null);
@@ -13,12 +12,12 @@ function App() {
     <div>
       <ToastContainer />
       <LoadingBar color='#0366d6' ref={ref} />
-      <Switch>
-        <Route exact path="/" render={() => <Auth />} />
-        <Route exact path="/activate/:token" render={() => <Activation />} />
-        <Route exact path="/reset/:token" render={() => <ResetPassword />} />
-        <ProtectedRoute exact path="/user" render={() => <Profile />} />
-      </Switch>
+      <Suspense fallback={
+        <div>
+          Loading...
+        </div>}>
+        <Routers />
+      </Suspense>
     </div>
   );
 }

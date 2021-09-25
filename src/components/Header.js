@@ -3,20 +3,22 @@ import { logoutUser, resetAuth } from "../store/auth";
 import { useHistory } from "react-router-dom";
 import IdleTimer from "react-idle-timer";
 import { useDispatch } from "react-redux";
+import { persistor } from "../store/configureStore"
 
 export default function Header() {
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const ref = useRef(null);
 
-	const logOut = (e) => {
-		e.preventDefault();
+	const logOut = () => {
+		persistor.purge();
 		dispatch(logoutUser())
 		dispatch(resetAuth())
 		history.push("/")
 	}
 
 	const handleOnIdle = () => {
+		persistor.purge();
 		dispatch(logoutUser())
 		dispatch(resetAuth())
 		history.push("/")

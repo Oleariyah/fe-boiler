@@ -51,6 +51,8 @@ const slice = createSlice({
         userReset: (user) => {
             user.loading = false;
             user.details = null;
+            user.subscribers = [];
+            user.updated = null;
             user.lastFetch = null;
         },
     }

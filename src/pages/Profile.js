@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 import { Subscribers } from "../components";
 import { Form, Button, Spinner, OverlayTrigger } from "react-bootstrap";
 import '../styles/Profile.css';
+import Skeleton from "react-loading-skeleton";
 
 export default function Profile() {
 	const user = useSelector(getUser);
@@ -82,7 +83,7 @@ export default function Profile() {
 			<div className="row m-0 p-0">
 				<div className="mr-3 mb-3">
 					<div className="card p-4" style={{ width: 510 }}>
-						<div className="text-center">
+						{details && <div className="text-center">
 							<div className="profile-img">
 								<img alt="avatar" src={details?.avatar} className="avatar" />
 								<span>
@@ -93,15 +94,29 @@ export default function Profile() {
 							</div>
 							<div className="mt-3 greetings">Welcome! {details?.name}</div>
 						</div>
+						}
+						{details === null && loading && (
+							<div className="text-center">
+								<Skeleton circle={true} height={150} width={150} />
+								<div className="mt-3 greetings">
+									<Skeleton />
+								</div>
+							</div>
+						)}
 					</div>
 					<div>
 						<div className="card text-left mt-3 py-4" style={{ width: 510 }}>
-							<img className="card-img-top" src="holder.js/100px180/" alt="" />
+							<img className="card-img-top" src="holder.js/100px180/" alt="" accept=".jpg .png" />
 							<div className="card-body">
 								{<div className="mb-4 d-flex flex-row align-items-baseline">
-									<h5 className="card-title mr-2">{details?.role === "admin"
-										? "Admin Details"
-										: isDisabled ? "User Details" : "Edit Details"
+									<h5 className="card-title mr-2">{
+										details && details?.role === "admin" && isDisabled
+											? "Admin Details"
+											: details && details?.role === "sub-admin" && isDisabled
+												? "Sub-Admin"
+												: details && details?.role === "subscriber" && isDisabled
+													? "Subscriber Details"
+													: "Edit Details"
 									}</h5>
 									<div
 										style={{ cursor: "pointer" }}
@@ -216,7 +231,7 @@ export default function Profile() {
 														role="status"
 														aria-hidden="true"
 													/>}
-													<span className="ml-2">Submit</span>
+													<span className="ml-2">Update</span>
 												</Button>
 											</div>
 										</div>
@@ -226,7 +241,7 @@ export default function Profile() {
 						</div>
 					</div>
 				</div>
-				{details?.role === "admin" && <div>
+				{details && details?.role !== "subscriber" && <div>
 					<Subscribers />
 				</div>
 				}

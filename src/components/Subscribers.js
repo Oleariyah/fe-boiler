@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getUser, getAllSubcribersInfo, updateUserRole, deleteUser } from "../store/user";
+import Skeleton from 'react-loading-skeleton';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserLock, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ConfirmAction from "./ConfirmAction";
@@ -11,7 +12,7 @@ export default function Subscribers() {
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const user = useSelector(getUser);
-	const { subscribers, loading } = user;
+	const { subscribers, loading, details } = user;
 
 	const [show, setShow] = useState(false);
 	const [selected, setSelected] = useState(null);
@@ -54,7 +55,7 @@ export default function Subscribers() {
 							</div>
 							<div></div>
 							{data.role !== "admin" && <div>
-								<Button
+								{details.role !== data.role && <Button
 									variant="light"
 									style={{ borderRadius: "50%", width: 40, height: 40 }}
 									className="mr-1"
@@ -74,7 +75,8 @@ export default function Subscribers() {
 								>
 									<FontAwesomeIcon icon={faUserLock} size="sm" />
 								</Button>
-								<Button
+								}
+								{details.role !== data.role && <Button
 									variant="light"
 									style={{ borderRadius: "50%", width: 40, height: 40 }}
 									disabled={loading}
@@ -90,13 +92,14 @@ export default function Subscribers() {
 								>
 									<FontAwesomeIcon icon={faTrash} size="sm" color="red" />
 								</Button>
+								}
 							</div>}
 						</div>
 						{subscribers[subscribers.length - 1]._id !== data._id && <hr />}
 					</div>
-				))
-				}
-				{subscribers.length === 0 && "No Subscriber"}
+				))}
+				{subscribers.length === 0 && !loading && "No Subscriber"}
+				{subscribers.length === 0 && loading && <Skeleton count={2} />}
 			</div>
 			<ConfirmAction
 				onHide={() => setShow(false)}
